@@ -33,14 +33,19 @@ class OrderController extends Controller
     public function store(Request $request)
     {       
     
-        
-        
-        $addToCart = AddToCart::with('product.packageDetails.products')->where('customer_id',$request->customer_id)->get();
+        $request['term'] = 2;
+        $request['salesMan'] = 'Jeric';
+        $request['selectedPack'] = 'karton';
+        $request['selectedUnit'] = 'box';    
+        $addToCart = AddToCart::with(['product' => function($query){
+            return $query->with(['packageDetails' => function($query){
+                return $query->with('products');
+            } ]);
+        }])->where('customer_id',$request->customer_id)->get();
         
         
         foreach ($addToCart as $value) {
             foreach($value->product->packageDetails as $details){
-                // return $details;
                 OrderPackageDetails::create([
                     'package_id' => $details->package_id,
                     'product_id' => $details->product_id,
@@ -61,9 +66,8 @@ class OrderController extends Controller
             'kart_quantity' => $request->noOfKarton,
             'status' => 'delivery',
         ]);
-        
+        $i = 1;
         foreach($cart as $checkOut){
-            
             $order->orderDetails()->create([
                 'product_id' => $checkOut->product_id,
                 'quantity' => $checkOut->quantity,
@@ -74,20 +78,23 @@ class OrderController extends Controller
                             'quantity' => $checkOut->product->quantity - $checkOut->quantity
                     ]);
                 }else{
-                    foreach ($addToCart as $key => $value) {
-                        foreach ($value->product->packageDetails as $key => $item) {
-                            return $item->products->quantity - ($item->quantity * $value->quantity);
-                            Product::where('id',$item->product_id)->update([
-                                'quantity' => $item->products->quantity - ($item->quantity * $value->quantity)
-                            ]);
-                        }
+                   
+                    
+                    foreach ($addToCart as  $value) {
+                        
+                        foreach ($value->product->packageDetails as  $item) {
+                            $updateProduct = Product::where('id', $item->product_id)->first();
+                            $updateProduct->quantity = $updateProduct->quantity - ($item->quantity * $value->quantity);
+                            $updateProduct->save();
+                        } 
                     }
+                     if($i++ == 1) break;
+                    
                 }
+               
             
             // AddToCart::find($checkOut->id)->delete();
         }
-
-       
     }
 
     /**
