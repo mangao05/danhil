@@ -33,7 +33,7 @@
                 </tr>
             </tbody>
         </table>      
-        <modal-deliver ref="refDelivery"></modal-deliver>
+        <modal-deliver ref="refDelivery" @loadOrders="loadOrders"></modal-deliver>
     </div>              
 </template>
 
@@ -87,6 +87,7 @@
         },
         mounted() {
             this.loadOrders();
+            
             console.log('Component mounted.')
         }
     }

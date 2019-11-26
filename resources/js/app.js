@@ -19,6 +19,9 @@ import VueApexCharts from 'vue-apexcharts'
 import Datepicker from 'vuejs-datepicker';
 import moment from 'moment';
 import converter from 'number-to-words';
+import VueAutosuggest from "vue-autosuggest";
+import vSelect from 'vue-select'
+
 
 //pages
 const routes = [
@@ -50,8 +53,10 @@ const options = {
     ],
     styles: [
       'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css',
-      'https://unpkg.com/kidlat-css/css/kidlat.css'
-    ]
+      // 'https://unpkg.com/kidlat-css/css/kidlat.css',
+      'https://fonts.googleapis.com/css?family=Archivo+Black&display=swap',
+      'http://localhost:3000/css/custom.css'
+    ],
   }
 
 const router = new VueRouter({
@@ -68,6 +73,9 @@ Vue.use(BootstrapVue)
 Vue.component('apexchart', VueApexCharts)
 Vue.use(VueSweetalert2);
 Vue.use(VueHtmlToPaper, options);
+Vue.use(VueAutosuggest);
+Vue.component('v-select', vSelect);
+
 
 
 
@@ -90,7 +98,9 @@ Vue.component('add-user', require('./components/user/AddUserComponent').default)
 Vue.component('add-position', require('./components/position/AddPositionComponent').default);
 Vue.component('list-order', require('./components/order/ListOfOrderComponent').default);
 Vue.component('modal-deliver', require('./components/modal/DeliveryModalComponent').default);
-// Vue.component('view-order-details', require('./components/order/ViewOrderPrintComponent').default);
+Vue.component('modal-re-stock', require('./components/modal/ReStockComponent').default);
+Vue.component('modal-edit-package', require('./components/modal/EditPackageComponent').default);
+Vue.component('pagination', require('laravel-vue-pagination'));
 
 window.Form = Form;
 Vue.filter('moment', function(date){
@@ -102,6 +112,19 @@ Vue.filter('toWords', function (value) {
   if (!value) return '';
   return converter.toWords(value);
 })
+
+Vue.filter('toCurrency', function (value) {
+  if (typeof value !== "number") {
+      return value;
+  }
+  var formatter = new Intl.NumberFormat('en-US', {
+      style: 'decimal',
+      minimumFractionDigits: 0
+  });
+  return formatter.format(value);
+});
+
+
 const app = new Vue({
     el: '#app',
     router

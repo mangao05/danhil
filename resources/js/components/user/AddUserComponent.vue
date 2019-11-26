@@ -5,33 +5,36 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
+                    <label v-show="editMode" class="label">Last Name:</label>
                     <input type="text" v-model="form.lastname" class="form-control" placeholder="Last Name"
                     :class="{'is-invalid': form.errors.has('lastname')}">
                     <has-error :form="form" field="lastname"></has-error>
                 </div>
                 <div class="col-md-6">
+                    <label v-show="editMode" class="label">First Name:</label>
                     <input type="text" v-model="form.firstname" class="form-control" placeholder="First Name"
                     :class="{'is-invalid': form.errors.has('firstname')}">
                     <has-error :form="form" field="firstname"></has-error>
                 </div>
             </div>
             <div class="mt-2">
+                <label v-show="editMode" class="label">Address:</label>
                 <input type="text" v-model="form.address" class="form-control" placeholder="Address"
                 :class="{'is-invalid': form.errors.has('address')}">
                 <has-error :form="form" field="address"></has-error>
             </div>
             <div class="mt-2 row">
                 <div class="col-md-6">
+                    <label v-show="editMode" class="label">Email:</label>
                     <input type="email" v-model="form.email" class="form-control" placeholder="Email"
                     :class="{'is-invalid': form.errors.has('email')}">
                     <has-error :form="form" field="email"></has-error>
                 </div>
                 <div class="col-md-6">
-                    <select name="" id="" v-model="form.position_id" class="form-control" :class="{'is-invalid': form.errors.has('position_id')}">
-                        <option value="" disabled selected>Select Position</option>
-                        <option :value="positions.id"  v-for="positions in position" :key="positions.id" >{{positions.position}}</option>
-                    </select>
-                    <has-error :form="form" field="position_id"></has-error>
+                    <label v-show="editMode" class="label">Contact #:</label>
+                     <input type="text" v-model="form.contact" class="form-control" placeholder="Contact #"
+                    :class="{'is-invalid': form.errors.has('contact')}">
+                    <has-error :form="form" field="contact"></has-error>
                 </div>
                 
             </div>
@@ -67,7 +70,7 @@
         data() {
             return {
                 role:{},
-                position:{},
+                
                 user_id:0,
                 editMode:false,
                 form: new Form({
@@ -75,7 +78,7 @@
                     firstname: "",
                     address: "",
                     email: "",
-                    position_id: "",
+                    contact: "",
                     userRole:[],
                 })
             }
@@ -88,12 +91,7 @@
                    this.role = data;
                 });
             },
-            Position(){
-                axios.get('api/position')
-                .then(({data}) => {
-                   this.position = data;
-                });
-            },
+            
             createUser(){
                 this.form.post('api/user')
                 .then(({data}) => {
@@ -115,7 +113,6 @@
         },
         mounted() {
             this.loadrole();
-            this.Position();
             console.log('Component mounted.')
         }
     }

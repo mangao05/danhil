@@ -22,9 +22,28 @@
 .headerPrintText{
     font-weight: bold;
 }
-
-@media only screen and (min-width: 600px) {
-    .printLogo {
-      
-    }
+.label{
+    font-size: 13px;
+    color: gray;
 }
+
+.viewProductLabel{
+    width: 150px;
+    font-weight: bold;
+    font-size: 18px;
+    color: gray;
+}
+
+.autosuggest__results-item{
+    list-style-type:none;
+}
+
+.test{
+    /* font-family: 'Archivo Black', sans-serif !important; */
+    /* color: black !important; */
+    color: black !important;
+}
+
+
+
+

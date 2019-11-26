@@ -7,6 +7,7 @@
                     <div>
                         <img class="img-fluid" :src="(product.category_id == 1) ? 'img/product/'+product.photo : (product.photo == null) ? 'img/picture.png' : 'storage/package-images/'+product.photo" alt="">
                     </div>
+                   
                     <div v-if="product.item.length < 20" style="font-size:13px;font-weight:bold;height:45px;">
                         {{product.item}}
                     </div>
@@ -15,7 +16,7 @@
                     </div>
                     <div>
                         ₱{{product.price}}
-                        <span class="float-right badge badge-success p-2" style="cursor:pointer;" @click="openModalProductPreview(product.id)">Add to Cart</span>
+                        <span class="float-right badge badge-success p-2" style="cursor:pointer;" >Add to Cart</span>
                     </div>
                 </div>
         </div>

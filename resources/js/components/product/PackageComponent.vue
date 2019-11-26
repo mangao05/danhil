@@ -20,14 +20,28 @@
                             </tr>
                         </thead>
                         <tbody>
-                         
-                            <tr v-for="listpackage in packages" :key="listpackage.id">
+                            <tr v-if="Object.keys(packages).length == 0">
+                                <td colspan="5" class="text-center">No Package...</td>
+                            </tr>
+                            <tr v-else v-for="listpackage in packages" :key="listpackage.id">
                                 <td>{{listpackage.item}}</td>
-                                <td>{{(listpackage.discount == null)?"N/A":listpackage.discount}}</td>
+                                <td>{{(listpackage.discount == null)?"N/A":listpackage.discount+"%"}}</td>
                                 <td>{{listpackage.quantity}}</td>
-                                <td>{{listpackage.price}}</td>
+                                <td>₱{{listpackage.price | toCurrency}}</td>
                                 <td>
-                                    <span class="badge badge-primary p-2" @click="viewDetails(listpackage.id, listpackage.total_box, listpackage.item, listpackage.photo)">Details</span>
+                                    
+                                    <b-dropdown id="dropdown-1" size="sm" text="More" class="m-md-2">
+                                        <b-dropdown-item>
+                                            <span class="badge badge-success p-2" style="width:100%" @click="viewDetails(listpackage.id, listpackage.item, listpackage.photo)">Details</span>
+                                        </b-dropdown-item>
+                                        <b-dropdown-item>
+                                            <span class="badge badge-danger p-2" style="width:100%" @click="deletePackage(listpackage.id,listpackage.photo)">Delete</span>
+                                        </b-dropdown-item>
+                                        <b-dropdown-item>
+                                            <span class="badge badge-primary p-2" style="width:100%" @click="editPackage(listpackage.id, listpackage.item, listpackage.photo)">Edit</span>
+                                        </b-dropdown-item>
+                                    </b-dropdown>
+                                    <span></span>
                                 </td>
                             </tr>
                         </tbody>
@@ -44,7 +58,7 @@
                     <h1 class="text-center">Package</h1>
                     
                     <div class="col-lg-8 offset-lg-2">
-                        <img class="img-thumbnail" :src="'/storage/package-images/'+packageItem.image" :alt="packageItem.name">
+                        <img class="img-thumbnail" :src="(packageItem.image == '')?'img/picture.png':'/storage/package-images/'+packageItem.image" :alt="packageItem.name">
                         <p class="text-center text-uppercase font-weight-bold py-2 h4">{{packageItem.name}}</p>
                     
                     </div>
@@ -66,9 +80,8 @@
                 </div>
             </div>
         </div>
-    </div>
-
-          
+            <modal-edit-package ref="editPackage"></modal-edit-package>
+    </div>  
 </template>
 
 <script>
@@ -79,7 +92,7 @@
                 packageDetails : {},
                 packageItem : {
                     name: "",
-                    total_box: "",
+                   
                     image :""
                 }
             }
@@ -91,15 +104,57 @@
                     this.packages = data.data;
                 });
             },
-            viewDetails(id, total_box, name, image){
+            viewDetails(id, name, image){
                 this.packageItem.name = name;
-                this.packageItem.total_box = total_box;
                 this.packageItem.image = image;
                 axios.get(`api/package/${id}`).then(({data}) => this.packageDetails = data)
+            },
+            deletePackage(id,photo){
+                this.$swal({
+                  title: 'Are you sure?',
+                  text: "You won't be able to revert this!",
+                  type: 'warning',
+                  showCancelButton: true,
+                  confirmButtonColor: '#3085d6',
+                  cancelButtonColor: '#d33',
+                  confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.value) {
+                      axios.post('api/deleteProduct',{
+                        product_id:id,
+                        photo:photo,
+                    })
+                      .then(({data}) => {
+                        
+                          Fire.$emit('loadPackage');
+                          this.$swal(
+                            'Deleted!',
+                            'Your file has been deleted.',
+                            'success'
+                          )
+                      });
+                    }
+                })
+            },
+
+            editPackage(id, name, image){
+               this.$refs.editPackage.editModalShow = true;
+               this.$refs.editPackage.packageImg = "/storage/package-images/"+image;
+               this.$refs.editPackage.packageName = name;
+               this.$refs.editPackage.packageArrays = [];
+               this.$refs.editPackage.loadPackageDetails(id);
+               this.$refs.editPackage.addAccessories = false;
+               this.$refs.editPackage.loadItem(id);
+               this.$refs.editPackage.sampleProducts1 = [];
+
             }
+
         },
         mounted() {
             this.loadPackage();
+            Fire.$on('loadPackage',()=>{
+                this.loadPackage();
+            })
             console.log('Component mounted.')
         }
     }

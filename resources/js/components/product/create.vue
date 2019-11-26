@@ -9,26 +9,26 @@
                             <div class="col-md-6">
 
                                 <div class="mb-3">
+                                    <label v-show="!createMode" class="label" >Please enter item name:</label>
                                         <input type="text" v-model="form.item" class="form-control" placeholder="Please enter item name" :class="{ 'is-invalid': form.errors.has('item') }">
                                         <has-error :form="form" field="item"></has-error>
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-3">
+                                    <div class="col-md-4">
+                                        <label v-show="!createMode" class="label" >Quantity:</label>
                                         <input type="number" v-model="form.quantity" class="form-control" placeholder="Quantity" :class="{ 'is-invalid': form.errors.has('quantity') }">
                                         <has-error :form="form" field="quantity"></has-error>
                                     </div> 
-                                    <div class="col-md-3">
+                                    <div class="col-md-4">
+                                        <label v-show="!createMode" class="label" >Supplier Price:</label>
                                         <input type="number" v-model="form.supplier" class="form-control" placeholder="Supplier Price" :class="{ 'is-invalid': form.errors.has('supplier') }">
                                         <has-error :form="form" field="supplier"></has-error>
                                     </div> 
-                                    <div class="col-md-3">
+                                    <div class="col-md-4">
+                                        <label v-show="!createMode" class="label" >Price:</label>
                                         <input type="number" v-model="form.price" class="form-control" placeholder="Price" :class="{ 'is-invalid': form.errors.has('price') }">
                                         <has-error :form="form" field="price"></has-error>
-                                    </div>
-                                   <div class="col-md-3">
-                                        <input type="number" v-model="form.box" class="form-control" placeholder="Box/Item" :class="{ 'is-invalid': form.errors.has('box') }">
-                                        <has-error :form="form" field="box"></has-error>
                                     </div>
                                 </div>
 
@@ -116,10 +116,9 @@
                 this.form.put('/api/product/'+this.productId)
                 .then(({data}) => {
                     this.$toastr.s('Successfully Updated','Success');
+                    this.$router.push('/product');
                 })
-                .catch(() => {
-
-                })
+               
             }
         },
         mounted() {

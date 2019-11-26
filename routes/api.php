@@ -49,4 +49,10 @@ Route::post('deleteItem','API\OrderController@deleteItem');
 Route::post('collectionFilter','API\CollectionController@collection');
 Route::get('recent','API\ProductController@recent');
 Route::post('karton','API\AddToCartController@totalKarton');
-
+Route::post('filter','API\ProductController@search_filter');
+Route::post('addQuantity','API\ProductController@add_quantity');
+Route::get('mainProduct','API\ProductController@main_Item');
+Route::post('packageItem','API\ProductController@packageItem');
+Route::post('exiting','API\ProductController@currentVsList');
+Route::post('updatePackage','API\PackageController@update_package');
+Route::get('userstatus/{id}/{status}','API\UserController@userStatus');

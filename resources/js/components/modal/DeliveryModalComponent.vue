@@ -88,7 +88,15 @@
                     check_date      : this.date,
                     value           : this.value,
                     order_id        : this.order_id
-                }).then(data => console.log(data))
+                }).then((data)=>{
+                    this.$toastr.s("Payment Successfully");
+                    this.modalShow = false;
+                    this.$emit("loadOrders");
+                    this.modePayment = "";
+                    this.value = "";
+                    this.modeCheck = "";
+                    this.check_no = "";
+                })
             },
             getpayment(){
                 

@@ -38,7 +38,7 @@ class CustomerController extends Controller
             'email' => 'email',
         ]);
         $request['balance'] = $request->credit;
-        Customer::create($request->only(['customer','address','contact','email','credit','balance']));
+        Customer::create($request->only(['customer','tin','address','contact','email','credit','balance']));
     }
 
     /**

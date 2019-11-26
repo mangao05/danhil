@@ -9,6 +9,8 @@ use App\Order;
 use App\Product;
 use App\OrderDetails;
 use App\Customer;
+use App\OrderPackageDetails;
+
 
 class OrderController extends Controller
 {
@@ -29,28 +31,63 @@ class OrderController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {   
+    {       
+    
+        
+        
+        $addToCart = AddToCart::with('product.packageDetails.products')->where('customer_id',$request->customer_id)->get();
+        
+        
+        foreach ($addToCart as $value) {
+            foreach($value->product->packageDetails as $details){
+                // return $details;
+                OrderPackageDetails::create([
+                    'package_id' => $details->package_id,
+                    'product_id' => $details->product_id,
+                    'quantity' => $details->quantity,
+                ]);
+            }
+        }
+       
         $cart = AddToCart::where('customer_id',$request->customer_id)->get();
         $order = Order::create([
             'user_id' => $request->user_id,
             'customer_id' => $request->customer_id,
             'price' => $request->total,
+            'term' => $request->term,
+            'sales_man' => $request->salesMan,
+            'unit' => $request->selectedUnit,
+            'pack' =>$request->selectedPack,
+            'kart_quantity' => $request->noOfKarton,
             'status' => 'delivery',
-            'total_box' => $request->box
         ]);
         
         foreach($cart as $checkOut){
+            
             $order->orderDetails()->create([
                 'product_id' => $checkOut->product_id,
                 'quantity' => $checkOut->quantity,
-                'price' => $checkOut->product->price * $checkOut->quantity
+                'price' => $checkOut->product->price
             ]);
-            Product::find($checkOut->product->id)->update([
-                'quantity' => $checkOut->product->quantity - $checkOut->quantity
-            ]);
+                if($checkOut->product->type != "package"){
+                    Product::find($checkOut->product->id)->update([
+                            'quantity' => $checkOut->product->quantity - $checkOut->quantity
+                    ]);
+                }else{
+                    foreach ($addToCart as $key => $value) {
+                        foreach ($value->product->packageDetails as $key => $item) {
+                            return $item->products->quantity - ($item->quantity * $value->quantity);
+                            Product::where('id',$item->product_id)->update([
+                                'quantity' => $item->products->quantity - ($item->quantity * $value->quantity)
+                            ]);
+                        }
+                    }
+                }
             
-            AddToCart::find($checkOut->id)->delete();
+            // AddToCart::find($checkOut->id)->delete();
         }
+
+       
     }
 
     /**
@@ -121,13 +158,14 @@ class OrderController extends Controller
     }
 
     public function viewOrderDetails(Request $request){
+        
         $order = Order::with(['user','customer', 'orderDetails' => function($query){
             return $query->with(['product' => function($query){
-                return $query->with('packageDetails.products');
+                return $query->with('orderPackageDetails.products');
             }]);
         }])
         ->find($request->order_id);
-
+        
         $inv = str_pad($order->id, 8, '0', STR_PAD_LEFT);
         $split = str_split($inv, 4);
     

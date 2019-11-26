@@ -1,3 +1,4 @@
+
 <template>
    <b-modal id="cartModal" title="Customer Cart" size="xl"  hide-footer v-model="cartPreviewModal" >
        <div class="card">
@@ -20,7 +21,7 @@
                             <img src="img/sewer.png" style="width:40px;" alt="" srcset="">
                         </div>
                         <div class="" style="position:absolute;right:350px;top:185px;z-index:9999">
-                            NO 5858-2872
+                            NO 0000-0000
                         </div>
                         <div class="col-md-4 text-center">
                             <span class="h4 font-weight-bold">
@@ -30,7 +31,7 @@
                                 SMART 0920-959-8858 SUN 0925-888-8808
                             </div>
                             <div class="font-weight-bold" style="font-size:15px;">
-                                TEL NOS.  332-81-88
+                                TEL NOS.  8-709-1272
                             </div>
                             <div class="font-weight-bold" style="font-size:10px;">
                                 EMAIL id danhil_enterprises55@yahoo.com
@@ -52,20 +53,42 @@
                                 <tr>
                                     <td>ADDRESS:</td>
                                     <td style="width:330px;border-bottom:1px solid black">{{customer.address}}</td>
-                                    <td></td>
-                                    <td style="width:330px;border-bottom:1px solid black"></td>
+                                    <td>TERMS:</td>
+                                    <td style="width:330px;border-bottom:1px solid black">
+                                        <select name="" v-model="term" id="" class="form-control">
+                                            <option value="" disabled hidden>Select Term</option>
+                                            <option v-for="termItem in termItems" :key="termItem.id" :value="termItem.name">
+                                                {{termItem.name}}
+                                            </option>
+                                        </select>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>TIN:</td>
-                                    <td style="width:330px;border-bottom:1px solid black"></td>
-                                    <td></td>
-                                    <td style="width:330px;border-bottom:1px solid black"></td>
+                                    <td style="width:330px;border-bottom:1px solid black">
+                                        {{customer.tin}}
+                                    </td>
+                                    <td>SALESMAN</td>
+                                    <td style="width:330px;border-bottom:1px solid black">
+                                        <input type="text" v-model="salesMan" placeholder="Input Salesman" class="form-control">
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>ORDER BY:</td>
-                                    <td style="width:330px;border-bottom:1px solid black">{{currentUser.firstname +" "+currentUser.lastname }}</td>
-                                    <td>SERIAL NO.:</td>
-                                    <td>AB</td>
+                                    <td style="width:330px;border-bottom:1px solid black">
+                                        {{customer.customer}}
+                                    </td>
+                                    <td>EMAIL:</td>
+                                    <td style="width:330px;border-bottom:1px solid black">
+                                        {{customer.email}}
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>CONTACT #:</td>
+                                    <td style="width:330px;border-bottom:1px solid black">
+                                        {{customer.contact}}
+                                    </td>
                                 </tr>
                             </table>
 
@@ -73,9 +96,9 @@
                                 <thead>
                                     <tr class="text-center">
                                         <th style="width:100px;">Quantity</th>
-                                        <th style="width:90px;">Unit</th>
+                                        <th style="width:100px;">Unit</th>
                                         <th style="width:400px;">Articles</th>
-                                        <th style="width:90px;">Unit Price</th>
+                                        <th style="width:80px;">Unit Price</th>
                                         <th style="width:180px;">Amount</th>
                                         
                                     </tr>
@@ -89,7 +112,13 @@
                                         <td @click="editQuantityisDisable(index)">
                                             <input type="number" @mouseout="disableQuantity(index)" :ref="'inputQuantity'" class="text-center" :disabled="true" style="width:50px;" :value="cartDetail.quantity">  
                                         </td>
-                                        <td></td>
+                                        <td>
+                                            <select name="" v-model="selectedUnit" id="" class="form-control">
+                                                <option value="" disabled hidden>-Unit-</option>
+                                                <option v-for="unit in units" :key="unit.id" :value="unit.name">{{unit.name}}</option>
+                                            </select>
+                                            
+                                        </td>
                                         <td style="font-size:11px;">
                                             <span class="font-weight-bold text-uppercase" v-if="cartDetail.product.package_details.length == 0">
                                                 {{cartDetail.product.item}} ( {{cartDetail.total_box}} {{ (cartDetail.total_box > 1) ? 'boxes' : 'box' }} )
@@ -99,17 +128,17 @@
                                                     {{cartDetail.product.item }} ( {{cartDetail.total_box}} {{ (cartDetail.total_box > 1) ? 'boxes' : 'box' }} )
                                                 </span>
                                                 <br>
-                                                (
-                                                    <span v-for="details in cartDetail.product.package_details" :key="details.id">
+                                                <ul>
+                                                    <li v-for="details in cartDetail.product.package_details" :key="details.id">
                                                         {{details.products.item}} / {{details.quantity}},
-                                                    </span>
-                                                )
+                                                    </li>
+                                                </ul>
                                 
                                             </span>
                                          </td>
-                                        <td>{{cartDetail.product.price}}</td>
+                                        <td>₱{{cartDetail.product.price | toCurrency}}</td>
                                         <td>
-                                            <span class="float-right">{{cartDetail.product.price * cartDetail.quantity}}</span>    
+                                            <span class="float-right">₱{{cartDetail.product.price * cartDetail.quantity | toCurrency}}</span>    
                                         </td>
                                         <td><span @click="deleteItem(index,cartDetail.id)" class="badge badge-danger"><i class="fa fa-times" aria-hidden="true"></i></span></td>
                                     </tr>
@@ -137,15 +166,32 @@
                                            <span class="float-right font-weight-bold">₱</span> 
                                         </td>
                                         <td>
-                                            <span class="float-right">{{total}}</span>
+                                            <span class="float-right">{{total | toCurrency}}</span>
                                         </td>
                                     </tr>
 
                                 </tbody>
                             </table>
                             <div class="row">
-                                <div class="col-md-6 h5 p-3 text-center">
-                                    KARTON/s[{{karton}}]
+                                <div class="col-md-6 h5 p-3">
+                                    <div class="row justify-content-center">
+                                        <div class="col-md-10">
+                                            <div class="row">
+                                                <div class="col-md-5">
+                                                    <input v-show="selectedPack == 'Karton'" v-model="noOfKarton" type="number" placeholder="No. of Karton" class="form-control">
+                                                </div>
+                                                <div class="col-md-7">
+                                                        <select name="" v-model="selectedPack" id="" class="form-control">
+                                                            <option value="" disabled hidden>-Select here-</option>
+                                                            <option v-for="pack in packs" :key="pack.id" :value="pack.name">
+                                                                {{pack.name}}
+                                                            </option>
+                                                        </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                  
                                 </div>
                                 <div class="col-md-6 pt-4" style="font-size:11px;">
                                     <span>
@@ -162,13 +208,41 @@
                                 <div class="col-md-6 text-center font-weight-bold">
                                     <p style="line-height:5px;">
                                         Authorized Signature
-                                        
                                     </p>
                                     <p>
                                         Print Name
                                     </p>
                                     
                                 </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="row">
+                                        <div class="col-md-6 p-2">
+                                            <div style="width:100%;height:50px;border:1px solid">
+
+                                            </div>
+                                            <div class="font-weight-bold text-center h4">
+                                                PREPARED BY
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 p-2">
+                                            <div style="width:100%;height:50px;border:1px solid">
+
+                                            </div>
+                                            <div class="font-weight-bold text-center h4">
+                                                CHECKED BY
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    &nbsp;
+                                </div>
+                            </div>
+                            <div class="font-weight-bold text-center">
+                                <p><u>COMPANY WILL NOT HONOR CASH ADVANCES OR BORROWING OF STOCKS OF OUR SALES REPRESENTATIVE</u></p>
+                                <h4><u>PLEASE MAKE ALL CHECKS PAYABLE TO DANHIL ENTERPRISES</u></h4>
                             </div>
                         </div>
                     </div>
@@ -199,7 +273,55 @@
                 customer_id:0,
                 total:0,
                 currentUser:{},
-                karton:0,
+                term:"",
+                termItems:[
+                    {
+                        name:"CWO",
+                    },
+                    {
+                        name:"COD",
+                    },
+                    {
+                        name:"30 DAYS",
+                    },
+                    {
+                        name:"60 DAYS",
+                    },
+                    {
+                        name:"90 DAYS",
+                    },
+                    {
+                        name:"120 DAYS",
+                    },
+                ],
+                selectedUnit:"",
+                units:[
+                    {
+                        name:"Pieces"
+                    },{
+                        name:"Box"
+                    },
+                    {
+                        name:"Set"
+                    }
+                ],
+                salesMan:"",
+                selectedPack:"",
+                packs:[
+                    {
+                        name:"Karton"
+                    },
+                    {
+                        name:"Mixer"
+                    },
+                    {
+                        name:"Engines"
+                    },
+                    {
+                        name:"Set Tank"
+                    },
+                ],
+                noOfKarton:"",
             }
         },
 
@@ -215,7 +337,6 @@
                     });
                      axios.get(`/api/addtocart/${id}?cartPreview=cart`)
                     .then(({data}) => {
-                        console.log(data)
                         this.cartDetails = data
                         this.count = count - data.length
                     });
@@ -253,7 +374,6 @@
               
                this.$delete(this.cartDetails,index)
               
-               
                axios.post('api/deleteItem',{id:id})
                .then(({data}) => {
                    this.grandTotal();
@@ -271,7 +391,12 @@
                                 user_id:this.$userId,
                                 total:this.total,
                                 credit:this.creditLimit,
-                                box:this.karton
+                                term:this.term,
+                                salesMan:this.salesMan,
+                                selectedUnit:this.selectedUnit,
+                                selectedPack:this.selectedPack,
+                                noOfKarton:this.noOfKarton,
+                                cartDetails:this.cartDetails
                             })
                             .then(({data}) => {
                                 this.cartPreviewModal = false;
@@ -303,15 +428,6 @@
                     },0);
                 });
             },
-
-            myKarton(){
-                axios.post('api/karton',{
-                    customer_id:this.customer_id
-                })
-                .then(({data}) => {
-                    this.karton = data;
-                });  
-            }
         },
     
         mounted() {

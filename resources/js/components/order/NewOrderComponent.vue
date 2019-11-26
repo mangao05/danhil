@@ -66,7 +66,7 @@
 
             cartPreview(){
                 this.$refs.cartModal.fetchCartDetails(this.customerID);
-                this.$refs.cartModal.myKarton(this.customerID);
+               
                 
             },
 

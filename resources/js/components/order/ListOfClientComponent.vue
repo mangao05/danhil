@@ -29,6 +29,9 @@
                     </tr>
                   </thead>
                   <tbody>
+                    <tr v-if="Object.keys(customer).length == 0">
+                        <td colspan="3" class="text-center">No Records...</td>
+                    </tr>
                     <tr v-for="(customers, index) in customer" :key="customers.id">
                         <td>{{index+1}}</td>
                         <td>{{customers.customer}}</td>

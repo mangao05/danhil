@@ -31,7 +31,7 @@ class AddToCartController extends Controller
     {
             $box = Product::find($request->product_id)->box; 
 
-            $request['total_box'] = $box * $request->quantity;
+          
 
             AddToCart::updateOrCreate(
                 [
@@ -40,7 +40,7 @@ class AddToCartController extends Controller
                 ],
                 $request->only(
                 [
-                    'customer_id','product_id','quantity','total_box'
+                    'customer_id','product_id','quantity'
                 ])
             );
              
@@ -62,7 +62,7 @@ class AddToCartController extends Controller
                 }]);
             }], 'customer')->where('customer_id',$id)->get();
 
-            return $cart ;
+            return $cart;
         }else{
             return count(AddToCart::where('customer_id',$id)->get());
         }
@@ -101,9 +101,5 @@ class AddToCartController extends Controller
 
     public function grandTotal(Request $request){
         return AddToCart::with('product')->where('customer_id',$request->customer_id)->get();
-    }
-
-    public function totalKarton(Request $request){
-        return AddToCart::where('customer_id',$request->customer_id)->sum('total_box');
     }
 }

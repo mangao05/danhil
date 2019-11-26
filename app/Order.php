@@ -8,6 +8,10 @@ class Order extends Model
 {
     protected $guarded = [];
 
+    protected $casts = [
+        'order_details' => 'array'
+    ];
+
     public function orderDetails(){
         return $this->hasMany(OrderDetails::class);
     }

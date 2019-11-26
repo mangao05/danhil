@@ -11,6 +11,7 @@
                         :class="{ 'is-invalid': form.errors.has('package_name') }">
                         <has-error :form="form" field="package_name"></has-error>
                     </div>
+                   
                     <div class="col-md-6">
                         <div class="input-group mb-3">
                             <input type="number" class="form-control" :readonly="(form.listItems.length == 0)?true:false" @keyup="discount" placeholder="Discount" id="" v-model="form.discount">
@@ -27,7 +28,7 @@
                 </div>
                 <div class="m-1 p-3" style="border:1px solid gray">
                     <div class="w-100 h5 font-weight-bold">
-                        Add-ons
+                        Item List
                     </div>
                     <div class="row">
                         <div class="col-md-6">
@@ -37,7 +38,6 @@
                                     id : sampleProduct.id,
                                     name: sampleProduct.item,
                                     price: sampleProduct.price,
-                                    box: sampleProduct.box,
                                     index : index
                                 } 
                                 ">
@@ -73,16 +73,18 @@
                     <tr>
                         <th>Item name</th>
                         <th>Quantity</th>
+                        <th>Type</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-if="Object.keys(this.form.listItems).length == 0">
-                        <td colspan="3" class="text-center">No Item...</td>
+                        <td colspan="4" class="text-center">No Item...</td>
                     </tr>
                     <tr v-else v-for="(listItem, index) in this.form.listItems" :key="listItem.id">
                         <td>{{listItem.name}}</td>
                         <td>{{listItem.quantity}}</td>
+                        <td>{{(index == 0)?"Main item":"Accessories"}}</td>
                         <td>
                             <span @click="removeItem(index)" class="badge badge-danger p-2">Remove</span>
                         </td>
@@ -121,13 +123,11 @@
         },
         methods:{
             removeItem(index){
-                console.log(this.form.listItems[index]);
                  this.sampleProducts.push({
                     id: this.form.listItems[index].id,
                     item: this.form.listItems[index].name,
                     price : this.form.listItems[index].price,
                     quantity : this.form.listItems[index].quantity,
-                    box : this.form.listItems[index].box
                 });
                 this.form.total_price = this.form.total_price - this.form.listItems[index].price * this.form.listItems[index].quantity;
                 this.$delete(this.form.listItems,index);
@@ -180,17 +180,19 @@
             loadItem(){
                 axios.get('api/product?listProduct=product')
                 .then(({data}) => { 
-                    console.log(data)
                     this.sampleProducts = data[0].product
                 });
             },
+
+           
             addons(){
-                 this.$delete(this.sampleProducts, this.item.index);
+                 
                 if(this.item == ""){
                     this.$toastr.e("Please Select Item");
                 }else if(this.itemQuantity == ""){
                     this.$toastr.e("Item Quantity is Required");
                 }else{
+                    this.$delete(this.sampleProducts, this.item.index);
                     var total = [];
                     var quantity = [];
 
@@ -200,7 +202,7 @@
                             name:this.item.name,
                             quantity:this.itemQuantity,
                             price:this.item.price,
-                            box:this.item.box
+                           
                         }
                     )
                  
@@ -229,15 +231,17 @@
             savePackage(){
                 this.form.post('api/product')
                 .then(({data}) => {
-                    console.log(data);
+            
                     
-                    // this.form.package_name = "";
-                    // this.form.listItems = [];
-                    // this.$router.push("/package");
-                    // this.$toastr.s("Package Successfully Created");
+                    this.form.package_name = "";
+                    this.form.listItems = [];
+                    this.$router.push("/package");
+                    this.$toastr.s("Package Successfully Created");
                 });
                
-            }
+            },
+
+           
             
         },
         mounted() {

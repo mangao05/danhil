@@ -19,9 +19,8 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
-<body style="background-image:url('img/cutter.jpg');background-size:cover;background-repeat:no-repeat;background-position:center">
+<body>
     <div id="app">
-    
         <main class="py-4">
             @yield('content')
         </main>

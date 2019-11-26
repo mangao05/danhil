@@ -97,4 +97,21 @@ class PackageController extends Controller
     {
         //
     }
+
+    public function update_package(Request $request){
+        Product::where('id',$request->id)->update([
+            'item' => $request->item,
+            'price' => $request->price,
+            'quantity' => $request->quantity,
+        ]);
+       
+        Package_Details::where('package_id',$request->id)->delete();
+        foreach($request->package as $item){
+            Package_Details::create([
+                'package_id' => $request->id,
+                'product_id' => $item['id'],
+                'quantity' => $item['quantity'],
+            ]);
+        }
+    }
 }

@@ -15,7 +15,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
   <link rel="stylesheet" href="{{ asset('css/app.css') }}">
   <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
-  
+  <link rel="stylesheet" href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Archivo+Black&display=swap" rel="stylesheet">
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper" id="app">
@@ -94,16 +95,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
           </li>
           @endcan
           
-          @can(2)
-          <li class="nav-item">
-            <router-link to="/position" class="nav-link">
-              <i class="nav-icon fas fa-user-tag"></i>
-              <p>
-                Position
-              </p>
-            </router-link>
-          </li>
-          @endcan
           @can(3)
           <li class="nav-item">
             <router-link to="/customer" class="nav-link">
@@ -144,6 +135,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           </li>
           @endcan
 
+          @can(6)
           <li class="nav-item">
             <router-link to="/test" class="nav-link">
               <i class="nav-icon fas fa-book"></i>
@@ -151,7 +143,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 Report
               </p>
             </router-link>
-          </li> 
+          </li>
+          @endcan 
 
           @can(5)
           <li class="nav-item has-treeview">
@@ -188,7 +181,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </ul> 
           </li>
           @endcan
-
+          @can(7)
           <li class="nav-item">
             <router-link to="/collections" class="nav-link">
               <i class="nav-icon fas fa-th"></i>
@@ -197,7 +190,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </p>
             </router-link>
           </li> 
-
+          @endcan
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
@@ -267,6 +260,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 <!-- jQuery -->
 <script src="{{ asset('js/app.js') }}"></script>
+<script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
 
 </body>
 </html>

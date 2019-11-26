@@ -48,7 +48,7 @@ class PackageDetailsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        return 123;
     }
 
     /**
@@ -61,4 +61,5 @@ class PackageDetailsController extends Controller
     {
         //
     }
+
 }

@@ -15,14 +15,20 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    private $box = 0;
+    
     private $fileName = '';
     public function index()
     {
         if(isset($_GET['listProduct'])){
             return Category::with('product')->get();
         }else{
-            return Product::latest()->paginate(10);
+            $filter = $_GET['filter'];
+            if(isset($filter)){
+                return Product::where('item','like','%'.$filter.'%')->
+                                where('type','item')->latest()->paginate(8);
+            }else{
+                return Product::where('type','item')->latest()->paginate(8);
+            }
         }
     }
 
@@ -35,20 +41,15 @@ class ProductController extends Controller
     public function store(Request $request)
     {   
         // dd($request->listItems);
-        $this->validate($request,[
-            'package_name' => 'required',
-        ]);
+       
 
         $category = Category::find($request->type);
         
         if($category->name == 'Package'){
             $request['price'] = $request->total_price;
             $request['item'] = $request->package_name;
+            $request['type'] = "package";
 
-            foreach($request->listItems as $listItems){
-                $this->box = $this->box + $listItems['box'];
-            }
-            $request['box'] = $this->box;
             $request['supplier'] = 0;
             if($request->imageData != "img/picture.png"){
                 $imageData = $request->imageData;
@@ -57,9 +58,14 @@ class ProductController extends Controller
                 $img->stream();
                 \Storage::disk('local')->put('public/package-images'.'/'.$fileName, $img, 'public');
                 $this->fileName = $fileName;
+                $request['photo'] = $this->fileName;
             }
-            $request['photo'] = $this->fileName;
+            if(!isset($request->photo)){
+                $request['photo'] = "picture.png";
+            }
+            
         }else{
+
             if(!isset($request->photo)){
                 $name = 'picture.png';
             }
@@ -69,22 +75,22 @@ class ProductController extends Controller
                 \Image::make($request->photo)->save(public_path('img/product/').$name);
             }
             $request['photo'] = $name;
+            $request['type'] = "item";
         }
-        $product = $category->product()->create($request->only(['item','supplier','price','discount', 'quantity','photo','box']));
+
+
+        $product = $category->product()->create($request->only(['item','supplier','price','discount', 'quantity','photo','type']));
         
-        foreach($request->listItems as $listItems){
-            Package_Details::create([
-                'package_id' => $product->id,
-                'product_id' => $listItems['id'],
-                'quantity' => $listItems['quantity'],
-            ]);
+        if($category->name == 'Package'){
+            foreach($request->listItems as $listItems){
+                Package_Details::create([
+                    'package_id' => $product->id,
+                    'product_id' => $listItems['id'],
+                    'quantity' => $listItems['quantity'],
+                ]);
+            }
         }
-        // $this->validate($request, [
-        //     'item' => 'required',
-        //     'price' => 'required',
-        //     'quantity' => 'required',
-        //     'supplier' => 'required'
-        // ]);
+        
         
     }
 
@@ -96,8 +102,7 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        return Product::find($id);
-       
+        return Product::with('packageDetails.products')->find($id);
     }
 
     /**
@@ -124,7 +129,7 @@ class ProductController extends Controller
             \Image::make($request->photo)->save(public_path('img/product/').$name);
         }
         $request['photo'] = $name;
-        $product->update($request->only(['item','price','quantity','photo','box']));
+        $product->update($request->only(['item','price','quantity','photo']));
     }
 
     /**
@@ -139,14 +144,51 @@ class ProductController extends Controller
     }
 
     public function lowStock(){
-        return Product::where('quantity','<=','5')->get();
+        return count(Product::where('quantity','<=','5')
+                            ->where('type','item')->get());
     }
 
     public function deleteProduct(Request $request){
         Product::find($request->product_id)->delete();
+       
+
+        $roomPhoto = public_path('/storage/package-images/').$request->photo;
+        if(File_exists($roomPhoto)){
+            @unlink($roomPhoto);
+        }
     }
 
     public function recent(){
         return Product::latest()->paginate(3);
     }
+
+    public function search_filter(Request $request){
+        return Product::where('item','like','%'.$request->keyword.'%')->
+                        where('type','item')->latest()->paginate(8);
+    }
+
+    public function add_quantity(Request $request){
+        $item = Product::find($request->id);
+        $item->update([
+            'quantity' => $item->quantity + $request->quantity
+        ]);
+        return "success";
+    }
+
+    public function currentVsList(Request $request){
+        $id = $request->id;
+        // \DB::enableQueryLog();
+        //     $packages_id =  Package_Details::select('product_id')->where('package_id', $id)->get();
+            // Product::with('packageDetails')->whereNotIn('id', $packages_id)->where('type', 'item')->get();
+            return Product::with('packageDetails')->whereNotIn('id', function($query) use ($id){
+                    return $query->select('product_id')
+                                ->from('package__details')
+                                ->where('package_id', $id);
+                })->where('type', 'item')->get();
+        // dd(\DB::getQueryLog());
+
+        //
+
+    }
+
 }

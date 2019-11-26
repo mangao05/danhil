@@ -20,6 +20,14 @@
                            {{customer.address}}
                        </div>
                    </div>
+                   <div class="row">
+                       <div class="col-md-4 font-weight-bold">
+                           Tin #:
+                       </div>
+                       <div class="col-md-8">
+                           {{customer.tin}}
+                       </div>
+                   </div>
                </div>
 
                <div class="col-md-6">
@@ -44,7 +52,7 @@
                            Credit Limit:
                        </div>
                        <div class="col-md-8">
-                           {{customer.credit}}
+                           ₱{{customer.credit | toCurrency}}
                        </div>
                    </div>
                </div>

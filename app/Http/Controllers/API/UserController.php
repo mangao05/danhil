@@ -18,7 +18,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return User::with('user_details.position')->latest()->paginate(10);
+        return User::with('user_details')->latest()->paginate(10);
     }
 
     /**
@@ -34,14 +34,14 @@ class UserController extends Controller
             'lastname' => 'required',
             'firstname' => 'required',
             'address' => 'required',
-            'position_id' => 'required'
+           
         ]);
 
         $request['password'] = Hash::make("danhil2019");
         $user = User::create($request->only(['lastname','firstname','email','password']));
         $user->user_details()->create([
             'address' => $request->address,
-            'position_id' => $request->position_id
+            'contact' => $request->contact
         ]);
 
         foreach($request->userRole as $role){
@@ -74,7 +74,6 @@ class UserController extends Controller
         User::find($id)->update($request->all());
         UserDetails::where('user_id',$id)->update([
             "address" => $request->address,
-            "position_id" => $request->position_id
         ]);
         UserRole::where('user_id',$id)->delete();
         foreach($request->userRole as $role){
@@ -98,5 +97,11 @@ class UserController extends Controller
 
     public function user_details(Request $request){
         return $request->all();
+    }
+    public function userStatus($id,$status){
+        $userStatus = User::with('user_details','user_role')->find($id)->update([
+            'status' => $status
+        ]);
+
     }
 }

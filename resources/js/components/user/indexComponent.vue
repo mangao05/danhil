@@ -13,7 +13,7 @@
                     <tr>
                       <th>#</th>
                       <th>User</th>
-                      <th>Role</th>
+                      
                       <th>Status</th>
                       <th></th>
                     </tr>
@@ -22,12 +22,13 @@
                     <tr v-for="(user, index) in users" :key="user.id">
                       <td>{{index+1}}</td>
                       <td>{{user.firstname}} {{user.lastname}}</td>
-                      <td>{{user.user_details.position.position}}</td>
-                      <td>Active</td>
+                    
+                      <td :class="(user.status == 'deactivated') ? 'text-danger' : 'text-success'">{{user.status }}</td>
                       <td>
                         <span @click="userDetails(user.id)" style="cursor:pointer" class="badge badge-info p-2"><i class="fa fa-eye" aria-hidden="true"></i></span>
 
-                        <span @click="deleteUser(user.id)" style="cursor:pointer" class="badge badge-danger p-2">Deactivate</span>
+                        <span @click="deleteUser(user.id)" style="cursor:pointer" class="badge badge-danger p-2"><i class="fa fa-trash" aria-hidden="true"></i></span>
+                         <span @click="userStatus(user.id,user.firstname,(user.status == 'activated') ? 'deactivated' : 'activated')" style="cursor:pointer" :class="(user.status == 'deactivated') ? 'badge-success' : 'badge-danger'" class=" p-2 badge">{{(user.status == 'activated') ? 'deactivate':'activate' }}</span>
                       </td>
                     </tr>
                   </tbody>
@@ -62,10 +63,11 @@
               var role = [];
               axios.get('api/user/'+id)
               .then(({data}) => {
-                // console.log(data.user_role);
+                console.log(data);
                 this.$refs.userDetails.user_id = id;
                 this.$refs.userDetails.form.fill(data);  
                 this.$refs.userDetails.form.address = data.user_details.address;
+                this.$refs.userDetails.form.contact = data.user_details.contact;
                 this.$refs.userDetails.form.position_id = data.user_details.position_id;
                 this.$refs.userDetails.editMode = true;
                 data.user_role.forEach(element => {
@@ -100,6 +102,19 @@
               this.$refs.userDetails.form.clear();
               this.$refs.userDetails.form.reset();
               this.$refs.userDetails.editMode = false;
+            },
+            userStatus(id,name,status){
+              axios.get('api/userstatus/'+id+'/'+status).then(({data})=>{
+                   Fire.$emit('AfterCreateUser');
+                  this.$swal({
+                  position: 'top-end',
+                  type: 'success',
+                  title: name +' '+ 'sucessfully' +' '+ status,
+                  showConfirmButton: false,
+                  timer: 1500
+                })
+              });
+                  
             }
         },
         mounted() {

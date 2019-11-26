@@ -42,7 +42,7 @@
                       <td>{{ collection.order.customer.customer }} </td>
                       <td>{{ collection.payment_type }}</td>
                       <td>
-                        {{ collection.check_date | moment }}
+                        {{(collection.payment_type == "Cash")?collection.created_at:collection.check_date | moment }}
                       </td>
                       <td>
                           <b-badge variant="success" style="cursor:pointer;" v-b-popover.hover.top="'Show '+ collection.order.customer.customer+'\'s payment details.'" title="VIEW"><i class="fas fa-eye"></i> </b-badge>
