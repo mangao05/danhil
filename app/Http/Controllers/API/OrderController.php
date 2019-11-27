@@ -88,13 +88,11 @@ class OrderController extends Controller
                             $updateProduct->save();
                         } 
                     }
-                     if($i++ == 1) break;
-                    
+                    if($i++ == 1) break;
                 }
-               
-            
-            // AddToCart::find($checkOut->id)->delete();
         }
+
+        $this->deductCredit($request->customer_id, $request->total);
     }
 
     /**
@@ -188,4 +186,10 @@ class OrderController extends Controller
         AddToCart::find($request->id)->delete();
     }
 
+
+    private function deductCredit($customerId, $total){
+        $customer = Customer::find($customerId);
+        $customer->balance = $customer->balance - $total;
+        $customer->save();
+    }
 }

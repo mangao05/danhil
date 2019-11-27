@@ -27,7 +27,7 @@
                             <span class="badge badge-primary p-2"><i class="fa fa-eye" aria-hidden="true"></i>View</span>
                         </router-link>
 
-                        <span v-show ="order.status == 'delivery'" style="cursor:pointer" @click="btnDelivered(order.id)" class="badge badge-info p-2"><i class="fas fa-truck"></i> Deliver</span>
+                        <span v-show ="order.status == 'delivery'" style="cursor:pointer" @click="btnDelivered(order.id)" class="badge badge-info p-2"><i class="fas fa-truck"></i> Payment</span>
                         <span v-show ="order.status == 'delivered'" class="badge badge-success p-2"><i class="fas fa-check"></i> Delivered</span>
                     </td>
                 </tr>
