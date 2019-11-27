@@ -93,7 +93,7 @@ class OrderController extends Controller
                 }
                
             
-            // AddToCart::find($checkOut->id)->delete();
+            AddToCart::find($checkOut->id)->delete();
         }
     }
 

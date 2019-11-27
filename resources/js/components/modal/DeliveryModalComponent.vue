@@ -89,13 +89,14 @@
                     value           : this.value,
                     order_id        : this.order_id
                 }).then((data)=>{
-                    this.$toastr.s("Payment Successfully");
-                    this.modalShow = false;
-                    this.$emit("loadOrders");
-                    this.modePayment = "";
-                    this.value = "";
-                    this.modeCheck = "";
-                    this.check_no = "";
+                    console.log(data);
+                    // this.$toastr.s("Payment Successfully");
+                    // this.modalShow = false;
+                    // this.$emit("loadOrders");
+                    // this.modePayment = "";
+                    // this.value = "";
+                    // this.modeCheck = "";
+                    // this.check_no = "";
                 })
             },
             getpayment(){
