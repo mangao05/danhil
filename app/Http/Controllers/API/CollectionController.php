@@ -14,6 +14,8 @@ class CollectionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    private $status;
     public function index()
     {
         return Collection::with('order.customer')->latest()->paginate(10);
@@ -27,15 +29,36 @@ class CollectionController extends Controller
      */
     public function store(Request $request)
     {
+         // find or first  => return relationship
+        // get or all => with() call the relationship
         $order = Order::find($request->order_id);
+       
         
-        $order->update([
-            'status' => 'delivered'
-        ]);
+        if($request->payment_type == 'Cash'){
+            if($order->price  <= $request->value){
+                $order->customer()->update([
+                    'balance' => $order->customer->balance + $order->price
+                ]);
+                
+                
+                $this->status = 'paid';
+               
+            }else{
+                $this->status = 'unpaid';
+            }
+        }
         
         $order->collection()->create($request->all());
+        $order->update([
+            'status' => $this->status
+        ]);
 
-        return "Success";
+        return "success";
+
+        
+        
+
+        // return "Success";
     }
 
     /**

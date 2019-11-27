@@ -18,7 +18,7 @@
                         <b-nav-item :active="active.all" @click="allCollection">All Collection</b-nav-item>
                         <b-nav-item :active="active.dated" @click="datedCheck(2)">Dated Check</b-nav-item>
                         <b-nav-item :active="active.postdated" @click="postDated(1)">Post Dated Check</b-nav-item>
-                        <b-nav-item :active="active.cash" @click="cash(3)">Cash</b-nav-item>
+                        <b-nav-item :active="active.cash" @click=" (3)">Cash</b-nav-item>
                       </b-nav>
                     </div>
               <div class="card-body table-responsive p-0">

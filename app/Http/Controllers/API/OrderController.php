@@ -90,6 +90,9 @@ class OrderController extends Controller
                     }
                     if($i++ == 1) break;
                 }
+               
+            
+            AddToCart::find($checkOut->id)->delete();
         }
 
         $this->deductCredit($request->customer_id, $request->total);
