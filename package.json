@@ -31,7 +31,7 @@
         "apexcharts": "^3.8.6",
         "bootstrap-vue": "^2.0.0",
         "laravel-vue-pagination": "^2.3.1",
-        "moment": "^2.24.0",
+        "moment": "^2.29.4",
         "number-to-words": "^1.2.4",
         "vform": "^1.0.1",
         "vue-apexcharts": "^1.5.0",
